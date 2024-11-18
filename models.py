@@ -19,7 +19,7 @@ class DBAuthor(Base):
 class DBBook(Base):
     __tablename__ = "book"
     __table_args__ = (
-        UniqueConstraint("book_id", "author_id"),
+        UniqueConstraint("id", "author_id"),
     )
 
     id = Column(Integer, primary_key=True, index=True)
