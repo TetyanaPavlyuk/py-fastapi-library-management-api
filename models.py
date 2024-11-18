@@ -1,4 +1,6 @@
-from sqlalchemy import Column, Integer, String, Date, ForeignKey, UniqueConstraint
+from sqlalchemy import (
+    Column, Integer, String, Date, ForeignKey, UniqueConstraint
+)
 from sqlalchemy.orm import relationship
 
 from database import Base
