@@ -108,7 +108,7 @@ def get_book_by_id(db: Session, book_id: int):
 def update_book(db: Session, book_id: int, book: schemas.BookUpdate):
     db_book = get_book_by_id(db, book_id)
     if book.title:
-        db_book.name = book.name
+        db_book.title = book.title
     if book.summary:
         db_book.summary = book.summary
     if book.publication_date:

@@ -14,7 +14,7 @@ class AuthorCreate(AuthorBase):
     pass
 
 
-class Authors(AuthorBase):
+class Author(AuthorBase):
     id: int
 
     class Config:
@@ -39,9 +39,9 @@ class BookCreate(BookBase):
     author_id: int = Field(..., gt=0)
 
 
-class Books(BookBase):
+class Book(BookBase):
     id: int
-    author: Authors
+    author: Author
 
     class Config:
         from_attributes = True
