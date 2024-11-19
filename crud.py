@@ -26,8 +26,8 @@ def create_author(db: Session, author: schemas.AuthorCreate):
     return db_author
 
 
-def get_author_list(db: Session):
-    return db.query(models.DBAuthor).all()
+def get_author_list(db: Session, skip: int = 0, limit: int = 10):
+    return db.query(models.DBAuthor).offset(skip).limit(limit).all()
 
 
 def get_author_by_id(db: Session, author_id: int):
@@ -52,8 +52,10 @@ def update_author(db: Session, author_id: int, author: schemas.AuthorUpdate):
 
 def delete_author(db: Session, author_id: int):
     db_author = get_author_by_id(db, author_id)
-    db.delete(db_author)
-    db.commit()
+    if db_author:
+        db.delete(db_author)
+        db.commit()
+        return {"message": f"Author {db_author.name} successfully deleted"}
 
 
 def get_book_by_author_and_title(db: Session, author_id: int, title: str):
@@ -66,7 +68,7 @@ def get_book_by_author_and_title(db: Session, author_id: int, title: str):
 
 
 def create_book(db: Session, book: schemas.BookCreate):
-    if get_book_by_author_and_title(db, book.author_id, book.name):
+    if get_book_by_author_and_title(db, book.author_id, book.title):
         raise HTTPException(
             status_code=400,
             detail="Book with this title and author already exists"
@@ -84,8 +86,16 @@ def create_book(db: Session, book: schemas.BookCreate):
     return db_book
 
 
-def get_book_list(db: Session):
-    return db.query(models.DBBook).all()
+def get_book_list(
+        db: Session,
+        author_id: int | None = None,
+        skip: int = 0,
+        limit: int = 10
+):
+    query = db.query(models.DBBook)
+    if author_id is not None:
+        query = query.filter(models.DBBook.author_id == author_id)
+    return query.offset(skip).limit(limit).all()
 
 
 def get_book_by_id(db: Session, book_id: int):
@@ -100,7 +110,7 @@ def update_book(db: Session, book_id: int, book: schemas.BookUpdate):
     if book.title:
         db_book.name = book.name
     if book.summary:
-        db_book.bio = book.bio
+        db_book.summary = book.summary
     if book.publication_date:
         db_book.publication_date = book.publication_date
     if book.author_id:
@@ -112,5 +122,7 @@ def update_book(db: Session, book_id: int, book: schemas.BookUpdate):
 
 def delete_book(db: Session, book_id: int):
     db_book = get_book_by_id(db, book_id)
-    db.delete(db_book)
-    db.commit()
+    if db_book:
+        db.delete(db_book)
+        db.commit()
+        return {"message": f"Book with id {book_id} successfully deleted"}

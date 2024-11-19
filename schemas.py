@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+from datetime import date
 from typing import List, Optional
 from pydantic import BaseModel, Field
 
@@ -12,77 +14,49 @@ class AuthorCreate(AuthorBase):
     pass
 
 
-class AuthorList(AuthorBase):
+class Authors(AuthorBase):
     id: int
-    books: List[BookList]
 
     class Config:
-        orm_mode = True
-
-
-class AuthorDetail(AuthorBase):
-    id: int = Field(..., gt=0)
-    books: List[BookDetail]
-
-    class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class AuthorUpdate(AuthorBase):
-    id: int = Field(..., gt=0)
     name: Optional[str] = None
     bio: Optional[str] = None
 
     class Config:
-        orm_mode = True
-
-
-class AuthorDelete(BaseModel):
-    id: int = Field(..., gt=0)
-
-    class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class BookBase(BaseModel):
     title: str
     summary: str
-    publication_date: str
+    publication_date: date
 
 
 class BookCreate(BookBase):
     author_id: int = Field(..., gt=0)
 
 
-class BookList(BookBase):
+class Books(BookBase):
     id: int
-    author: AuthorDetail
+    author: Authors
 
     class Config:
-        orm_mode = True
-
-
-class BookDetail(BookBase):
-    id: int = Field(..., gt=0)
-    author: AuthorDetail
-
-    class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class BookUpdate(BookBase):
-    id: int = Field(..., gt=0)
     title: Optional[str] = None
     summary: Optional[str] = None
-    publication_date: Optional[str] = None
+    publication_date: Optional[date] = None
     author_id: Optional[int] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
-class BookDelete(BaseModel):
-    id: int = Field(..., gt=0)
-
-    class Config:
-        orm_mode = True
+class DeleteResponse(BaseModel):
+    message: str
+    deleted_id: int
